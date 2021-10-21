@@ -7,7 +7,6 @@ COPY go.mod go.sum /usr/src/
 COPY cmd /usr/src/cmd
 COPY pkg /usr/src/pkg
 COPY scripts /usr/src/scripts
-COPY chart /usr/src/chart
 ARG IMAGE_TAG=latest
 RUN cd /usr/src && \
     CGO_ENABLED=0 go build -ldflags "-extldflags -static -s" -o /usr/sbin/ros-operator ./cmd/ros-operator && \
@@ -19,7 +18,6 @@ RUN cd /usr/src && \
 FROM scratch AS framework
 COPY --from=build /usr/bin/busybox-static /usr/bin/busybox
 COPY --from=build /usr/bin/luet /usr/bin/luet
-COPY --from=build /usr/src/dist/rancheros-operator-chart.tgz /usr/share/rancher/os2/
 COPY framework/files/etc/luet/luet.yaml /etc/luet/luet.yaml
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
 
@@ -28,11 +26,7 @@ ENV LUET_NOLOCK=true
 RUN ["/usr/bin/busybox", "sh", "-c", "if [ -e /etc/luet/luet.yaml.$(busybox uname -m) ]; then busybox mv -f /etc/luet/luet.yaml.$(busybox uname -m) /etc/luet/luet.yaml; fi && busybox rm -f /etc/luet/luet.yaml.*"]
 RUN ["luet", \
     "install", "--no-spinner", "-d", "-y", \
-    "selinux/k3s", \
-    "selinux/rancher", \
-    "meta/cos-minimal", \
-    "utils/k9s", \
-    "utils/nerdctl"]
+    "meta/cos-minimal"]
 
 COPY --from=build /usr/sbin/ros-installer /usr/sbin/ros-installer
 COPY --from=build /usr/sbin/ros-operator /usr/sbin/ros-operator
