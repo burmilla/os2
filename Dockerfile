@@ -87,6 +87,7 @@ RUN zypper in -y \
     mdadm \
     multipath-tools \
     nano \
+    net-tools \
     netcat-openbsd \
     nfs-utils \
     open-iscsi \
