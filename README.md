@@ -7,7 +7,7 @@ it's corresponding Kubernetes distributions [RKE2](https://rke2.io)
 and [k3s](https://k3s.io). It is built using the [cOS-toolkit](https://rancher-sandbox.github.io/cos-toolkit-docs/docs/)
 and based on openSUSE. Initial node configurations is done using only a
 cloud-init style approach and all further maintenance is done using
-Kubernetes operators.
+???
 
 ## Use Cases
 
@@ -31,27 +31,12 @@ image that is built using standard Docker build processes. RancherOS is
 built using normal `docker build` and if you wish to customize the OS
 image all you need to do is create a new `Dockerfile`.
 
-### rancherd
-
-RancherOS v2 includes no container runtime, Kubernetes distribution,
-or Rancher itself. All of these assests are dynamically pulled at runtime. All that
-is included in RancherOS is [rancherd](https://github.com/rancher/rancherd) which
-is responsible for bootstrapping RKE2/k3s and Rancher from an OCI registry. This means
-an update to containerd, k3s, RKE2, or Rancher does not require an OS upgrade
-or node reboot.
-
 ### cloud-init
 
 RancherOS v2 is initially configured using a simple version of `cloud-init`.
 It is not expected that one will need to do a lot of customization to RancherOS
 as the core OS's sole purpose is to run Rancher and Kubernetes and not serve as
 a generic Linux distribution.
-
-### RancherOS Operator
-
-RancherOS v2 includes an operator that is responsible for managing OS upgrades
-and assiting with secure device onboarding (SDO).
-
 
 ### openSUSE Leap
 

@@ -3,17 +3,12 @@ RUN zypper ref
 RUN zypper in -y squashfs xorriso go1.16 upx busybox-static curl tar git gzip
 RUN curl -Lo /usr/bin/luet https://github.com/mudler/luet/releases/download/0.18.1/luet-0.18.1-linux-$(go env GOARCH) && \
     chmod +x /usr/bin/luet
-RUN curl -Lo /usr/bin/rancherd https://github.com/rancher/rancherd/releases/download/v0.0.1-alpha9/rancherd-$(go env GOARCH) && \
-    chmod +x /usr/bin/rancherd
-RUN curl -L https://get.helm.sh/helm-v3.7.1-linux-$(go env GOARCH).tar.gz | tar xzf - -C /usr/bin --strip-components=1
 COPY go.mod go.sum /usr/src/
 COPY cmd /usr/src/cmd
 COPY pkg /usr/src/pkg
 COPY scripts /usr/src/scripts
 COPY chart /usr/src/chart
 ARG IMAGE_TAG=latest
-RUN TAG=${IMAGE_TAG} /usr/src/scripts/package-helm && \
-    cp /usr/src/dist/artifacts/rancheros-operator-*.tgz /usr/src/dist/rancheros-operator-chart.tgz
 RUN cd /usr/src && \
     CGO_ENABLED=0 go build -ldflags "-extldflags -static -s" -o /usr/sbin/ros-operator ./cmd/ros-operator && \
     upx /usr/sbin/ros-operator
@@ -23,9 +18,7 @@ RUN cd /usr/src && \
 
 FROM scratch AS framework
 COPY --from=build /usr/bin/busybox-static /usr/bin/busybox
-COPY --from=build /usr/bin/rancherd /usr/bin/rancherd
 COPY --from=build /usr/bin/luet /usr/bin/luet
-COPY --from=build /usr/bin/helm /usr/bin/helm
 COPY --from=build /usr/src/dist/rancheros-operator-chart.tgz /usr/share/rancher/os2/
 COPY framework/files/etc/luet/luet.yaml /etc/luet/luet.yaml
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
@@ -58,6 +51,8 @@ RUN zypper in -y \
     curl \
     device-mapper \
     dmidecode \
+    docker \
+    docker-bash-completion \
     dosfstools \
     dracut \
     e2fsprogs \

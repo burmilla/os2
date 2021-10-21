@@ -50,9 +50,6 @@ nav:
     #  - install/iso-install.md
     #  - install/pxe-boot-install.md
     #- configuration.md
-    #- Operator:
-    #    - operator/upgrade.md
-    #    - operator/inventory.md
     #- dashboard.md
     #- Reference:
     #  - reference/api.md
